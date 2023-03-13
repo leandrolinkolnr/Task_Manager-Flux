@@ -12,13 +12,13 @@ class App extends Component {
       todoList: []
     }
     this.add = this.add.bind(this);
+    this.remove = this.remove.bind(this);
   }
 
   async componentDidMount(){
     const todoList = await TodoService.list();
     this.setState({todoList});
   }
-
 
   add(description){
     TodoService.create({
@@ -32,13 +32,21 @@ class App extends Component {
     } )
   }
   
+  remove(id){
+      const {todoList} = this.state,
+      ItemIndex = todoList.findIndex(item => item.id === id);
+      todoList.splice(ItemIndex, 1) // quantos itens apagar?
+      TodoService.remove(id);
+      this.setState({todoList});
+  }
+
   render() {
     const { state } = this;
     return (
       <div className="App">
       <NewToDoItem onAdd={this.add} />
       <hr/>
-      <ToDoList items={state.todoList} />
+      <ToDoList items={state.todoList} onRemove={this.remove} />
       </div>
     );
   }
